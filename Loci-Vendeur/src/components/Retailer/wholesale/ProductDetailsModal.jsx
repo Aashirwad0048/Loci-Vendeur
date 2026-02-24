@@ -3,8 +3,16 @@ import { X, Package, Star, Plus, Minus } from 'lucide-react';
 
 export default function ProductDetailsModal({ product, onClose, onAddToCart }) {
   // Internal State for the modal logic
-  const [qty, setQty] = useState(product.minOrderQty);
+  const [qtyInput, setQtyInput] = useState(String(product.minOrderQty));
   const [sellingPrice, setSellingPrice] = useState(product.price); // Default MRP
+
+  const clampQty = (value) => {
+    const parsed = Number(value);
+    if (Number.isNaN(parsed)) return product.minOrderQty;
+    return Math.max(product.minOrderQty, Math.floor(parsed));
+  };
+
+  const qty = clampQty(qtyInput);
 
   // Calculate Profit
   const estimatedProfit = (sellingPrice - product.wholesalePrice) * qty;
@@ -69,10 +77,28 @@ export default function ProductDetailsModal({ product, onClose, onAddToCart }) {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-gray-700">Quantity</span>
-              <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
-                <button onClick={() => setQty(q => Math.max(product.minOrderQty, q - 1))} className="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm hover:bg-gray-50"><Minus size={16} /></button>
-                <span className="font-bold w-8 text-center">{qty}</span>
-                <button onClick={() => setQty(q => q + 1)} className="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm hover:bg-gray-50"><Plus size={16} /></button>
+              <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => setQtyInput(String(Math.max(product.minOrderQty, qty - 1)))}
+                  className="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm hover:bg-gray-50"
+                >
+                  <Minus size={16} />
+                </button>
+                <input
+                  type="number"
+                  min={product.minOrderQty}
+                  step="1"
+                  value={qtyInput}
+                  onChange={(e) => setQtyInput(e.target.value)}
+                  onBlur={() => setQtyInput(String(clampQty(qtyInput)))}
+                  className="w-16 h-8 text-center text-sm font-bold rounded bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black"
+                />
+                <button
+                  onClick={() => setQtyInput(String(qty + 1))}
+                  className="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm hover:bg-gray-50"
+                >
+                  <Plus size={16} />
+                </button>
               </div>
             </div>
 

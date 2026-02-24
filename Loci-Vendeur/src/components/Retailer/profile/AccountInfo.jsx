@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom"; // Import this
 
-export default function AccountInfo({ data }) {
+export default function AccountInfo({ data, onChangePassword }) {
   const navigate = useNavigate();
 
   // The Logout Logic moves here
@@ -37,7 +37,11 @@ export default function AccountInfo({ data }) {
       </div>
 
       <div className="grid grid-cols-1 gap-3">
-        <button className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg font-medium transition text-sm shadow-sm">
+        <button
+          type="button"
+          onClick={onChangePassword}
+          className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg font-medium transition text-sm shadow-sm"
+        >
           Change Password
         </button>
 

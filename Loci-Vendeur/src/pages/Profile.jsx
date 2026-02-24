@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ProfileHeader from "../components/Retailer/profile/ProfileHeader";
 import ShopInfo from "../components/Retailer/profile/ShopInfo";
 import BusinessSettings from "../components/Retailer/profile/BusinessSettings";
@@ -6,6 +7,10 @@ import AccountInfo from "../components/Retailer/profile/AccountInfo";
 import API from "../api/axios";
 
 export default function Profile() {
+  const navigate = useNavigate();
+  const handleChangePassword = () => {
+    navigate("/forgot-password");
+  };
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -144,7 +149,7 @@ export default function Profile() {
               isEditing={isEditing}
             />
 
-            <AccountInfo data={formData} />
+            <AccountInfo data={formData} onChangePassword={handleChangePassword} />
           </div>
         </div>
       </div>

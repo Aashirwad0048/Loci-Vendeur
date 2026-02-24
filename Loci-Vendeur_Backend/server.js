@@ -15,9 +15,21 @@ import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://loci-vendeur.vercel.app',
+  env.clientUrl
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: env.clientUrl,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );

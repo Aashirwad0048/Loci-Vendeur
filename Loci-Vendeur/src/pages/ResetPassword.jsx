@@ -17,6 +17,11 @@ const ResetPassword = () => {
     e.preventDefault();
     setError("");
 
+    if (!token) {
+      setError("Reset token missing. Open the latest recovery link from your email.");
+      return;
+    }
+
     if (formData.password.length < 6) {
       setError("Passkey must be at least 6 characters.");
       return;
@@ -80,7 +85,8 @@ const ResetPassword = () => {
                   required
                   placeholder="••••"
                   className="w-full pl-10 pr-12 py-3 bg-black/20 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-teal-400 outline-none transition-all text-sm"
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  value={formData.password}
+                  onChange={(e) => setFormData((prev) => ({...prev, password: e.target.value}))}
                 />
                 <button 
                   type="button"
@@ -101,14 +107,15 @@ const ResetPassword = () => {
                   required
                   placeholder="••••"
                   className="w-full pl-10 pr-12 py-3 bg-black/20 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-teal-400 outline-none transition-all text-sm"
-                  onChange={(e) => setFormData({...formData, confirm: e.target.value})}
+                  value={formData.confirm}
+                  onChange={(e) => setFormData((prev) => ({...prev, confirm: e.target.value}))}
                 />
               </div>
             </div>
 
             <button 
               type="submit" 
-              disabled={loading}
+              disabled={loading || !token}
               className="w-full bg-white text-black font-black py-4 rounded-xl hover:bg-teal-50 hover:text-teal-600 transition-all shadow-lg uppercase tracking-widest text-xs mt-2 active:scale-95"
             >
               {loading ? 'Updating...' : 'Overwrite Identity'}

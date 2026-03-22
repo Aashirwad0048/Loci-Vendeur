@@ -21,14 +21,23 @@ const DisputesPage = () => {
   const [disputes, setDisputes] = useState([]);
   const [selectedDispute, setSelectedDispute] = useState(null);
 
-  const fetchDisputes = async () => {
-    const response = await API.get('/disputes');
-    const raw = response.data?.data || [];
-    setDisputes(raw.map(toUiDispute));
-  };
-
   useEffect(() => {
-    fetchDisputes().catch((e) => console.error(e));
+    let isActive = true;
+
+    const loadDisputes = async () => {
+      const response = await API.get('/disputes');
+      const raw = response.data?.data || [];
+
+      if (isActive) {
+        setDisputes(raw.map(toUiDispute));
+      }
+    };
+
+    loadDisputes().catch((e) => console.error(e));
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const handleResolve = async (disputeId, outcome) => {
@@ -41,7 +50,9 @@ const DisputesPage = () => {
         await API.patch(`/disputes/${disputeId}/resolve`, { status: 'rejected' });
       }
 
-      await fetchDisputes();
+      const response = await API.get('/disputes');
+      const raw = response.data?.data || [];
+      setDisputes(raw.map(toUiDispute));
       setSelectedDispute(null);
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update dispute');

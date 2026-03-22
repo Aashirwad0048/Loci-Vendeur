@@ -1,8 +1,8 @@
 import React from "react";
 import { Calendar, UserCheck, Shield, LogOut, KeyRound } from "lucide-react";
 
-export default function WholesaleAccountInfo({ data, onChangePassword, onLogout }) {
-  const Item = ({ icon, label, val }) => (
+function MetadataItem({ icon, label, val }) {
+  return (
     <div className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
       <div className="flex items-center gap-3 text-gray-400">
         {icon}
@@ -11,14 +11,16 @@ export default function WholesaleAccountInfo({ data, onChangePassword, onLogout 
       <span className="text-xs font-black text-gray-900 italic tracking-tight">{val}</span>
     </div>
   );
+}
 
+export default function WholesaleAccountInfo({ data, onChangePassword, onLogout }) {
   return (
     <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
       <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Account Metadata</h3>
       <div className="space-y-1">
-        <Item icon={<UserCheck size={14} />} label="Security" val="Level 3 Access" />
-        <Item icon={<Calendar size={14} />} label="Member Since" val={data.joinedDate} />
-        <Item icon={<Shield size={14} />} label="Node" val="Region-North" />
+        <MetadataItem icon={<UserCheck size={14} />} label="Security" val="Level 3 Access" />
+        <MetadataItem icon={<Calendar size={14} />} label="Member Since" val={data.joinedDate} />
+        <MetadataItem icon={<Shield size={14} />} label="Node" val="Region-North" />
       </div>
 
       <div className="mt-5 space-y-2">

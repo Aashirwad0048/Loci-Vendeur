@@ -7,54 +7,65 @@ import API from '../api/axios';
 const InventoryPage = () => {
   const [supplies, setSupplies] = useState([]);
   const [selectedWholesaler, setSelectedWholesaler] = useState(null);
+  const mapSupplies = (raw) =>
+    raw.map((p) => {
+      const wholesalerObj = p.wholesaler || (p.wholesalerId && typeof p.wholesalerId === 'object' ? p.wholesalerId : null);
+      const wholesalerName =
+        typeof p.wholesalerName === 'string'
+          ? p.wholesalerName
+          : wholesalerObj?.name || 'Wholesaler';
+      const wholesalerId = wholesalerObj?.id || wholesalerObj?._id || p.wholesalerId || null;
 
-  const fetchProducts = async () => {
-    const response = await API.get('/products?includeInactive=true');
-    const raw = response.data?.data || [];
-    setSupplies(
-      raw.map((p) => {
-        const wholesalerObj = p.wholesaler || (p.wholesalerId && typeof p.wholesalerId === 'object' ? p.wholesalerId : null);
-        const wholesalerName =
-          typeof p.wholesalerName === 'string'
-            ? p.wholesalerName
-            : wholesalerObj?.name || 'Wholesaler';
-        const wholesalerId = wholesalerObj?.id || wholesalerObj?._id || p.wholesalerId || null;
-
-        return {
-          id: p._id,
-          productName: p.name,
-          wholesalerName,
-          wholesaler: {
-            id: wholesalerId,
-            name: wholesalerName,
-            city: p.wholesalerCity || wholesalerObj?.city || p.city || '-',
-          },
-          city: p.city,
-          stock: p.stock,
-          price: p.price,
-          isActive: p.isActive,
-          flagged: p.flagged,
-        };
-      })
-    );
-  };
+      return {
+        id: p._id,
+        productName: p.name,
+        wholesalerName,
+        wholesaler: {
+          id: wholesalerId,
+          name: wholesalerName,
+          city: p.wholesalerCity || wholesalerObj?.city || p.city || '-',
+        },
+        city: p.city,
+        stock: p.stock,
+        price: p.price,
+        isActive: p.isActive,
+        flagged: p.flagged,
+      };
+    });
 
   useEffect(() => {
-    fetchProducts().catch((e) => console.error(e));
+    let isActive = true;
+
+    const loadProducts = async () => {
+      const response = await API.get('/products?includeInactive=true');
+      const raw = response.data?.data || [];
+
+      if (isActive) {
+        setSupplies(mapSupplies(raw));
+      }
+    };
+
+    loadProducts().catch((e) => console.error(e));
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const toggleActive = async (id) => {
     const target = supplies.find((s) => s.id === id);
     if (!target) return;
     await API.patch(`/products/${id}/status`, { isActive: !target.isActive, flagged: target.flagged });
-    await fetchProducts();
+    const response = await API.get('/products?includeInactive=true');
+    setSupplies(mapSupplies(response.data?.data || []));
   };
 
   const toggleFlag = async (id) => {
     const target = supplies.find((s) => s.id === id);
     if (!target) return;
     await API.patch(`/products/${id}/status`, { isActive: target.isActive, flagged: !target.flagged });
-    await fetchProducts();
+    const response = await API.get('/products?includeInactive=true');
+    setSupplies(mapSupplies(response.data?.data || []));
   };
 
   return (

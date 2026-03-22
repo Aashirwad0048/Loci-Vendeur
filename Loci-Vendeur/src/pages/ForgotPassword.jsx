@@ -14,9 +14,15 @@ const ForgotPassword = () => {
     e.preventDefault();
     setError('');
 
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      setError('Enter a valid email address to continue.');
+      return;
+    }
+
     try {
       setLoading(true);
-      await API.post('/auth/forgot-password', { email: email.trim().toLowerCase() });
+      await API.post('/auth/forgot-password', { email: normalizedEmail });
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to generate reset link');
@@ -62,7 +68,10 @@ const ForgotPassword = () => {
                   placeholder="name@company.com" 
                   className="w-full pl-10 pr-4 py-3 bg-black/20 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-teal-400 outline-none transition-all text-sm"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (error) setError('');
+                  }}
                 />
               </div>
             </div>
@@ -74,6 +83,10 @@ const ForgotPassword = () => {
             >
               {loading ? 'Generating...' : 'Request Reset Link'}
             </button>
+
+            <p className="text-[11px] text-gray-400 leading-relaxed">
+              We&apos;ll send the recovery link only if the account exists, which keeps account discovery protected.
+            </p>
           </form>
         )}
       </div>

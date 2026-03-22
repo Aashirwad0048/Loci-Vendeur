@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Clock3, MapPin, Package, Truck } from 'lucide-react';
 import API from '../api/axios';
@@ -94,7 +94,7 @@ export default function OrderDetailPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       setLoading(true);
       const response = await API.get(`/orders/${id}`);
@@ -105,11 +105,11 @@ export default function OrderDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchOrder();
-  }, [id]);
+  }, [fetchOrder]);
 
   const displayId = useMemo(() => (order?._id ? `ORD-${String(order._id).slice(-6).toUpperCase()}` : id), [order, id]);
 

@@ -1,8 +1,20 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Plus, Package, AlertTriangle, IndianRupee,Layers } from "lucide-react";
 import SupplyCard from "../components/Wholesale/inventory/SupplyCard";
 import AddSupplyModal from "../components/Wholesale/inventory/AddSupplyModal";
 import API from "../api/axios";
+
+const mapSupply = (item) => ({
+  id: item._id,
+  productName: item.name,
+  category: item.category || "General",
+  price: item.price,
+  stock: item.stock,
+  minOrderQty: item.minOrderQty || 1,
+  image: item.image || "",
+  city: item.city,
+  isActive: item.isActive !== false,
+});
 
 const WholesaleInventory = () => {
   const [supplies, setSupplies] = useState([]);
@@ -10,35 +22,36 @@ const WholesaleInventory = () => {
   const [editingSupply, setEditingSupply] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const currentUser = useMemo(() => JSON.parse(localStorage.getItem("currentUser")), []);
+  const currentUser = useMemo(() => JSON.parse(localStorage.getItem("currentUser") || "null"), []);
 
-  const fetchInventory = async () => {
+  const refreshInventory = async () => {
     if (!currentUser?.id) return;
+
     const response = await API.get(`/products?wholesalerId=${currentUser.id}&includeInactive=true`);
     const raw = response.data?.data || [];
-    setSupplies(
-      raw.map((item) => ({
-        id: item._id,
-        productName: item.name,
-        category: item.category || "General",
-        price: item.price,
-        stock: item.stock,
-        minOrderQty: item.minOrderQty || 1,
-        image: item.image || "",
-        city: item.city,
-        isActive: item.isActive !== false,
-      }))
-    );
+    setSupplies(raw.map(mapSupply));
   };
 
   useEffect(() => {
-    fetchInventory().catch((e) => console.error(e));
-  }, [currentUser?.id]);
+    let isActive = true;
 
-  // Logic to refresh data after adding a product
-  const refreshInventory = () => {
-    fetchInventory().catch((e) => console.error(e));
-  };
+    const loadInventory = async () => {
+      if (!currentUser?.id) return;
+
+      const response = await API.get(`/products?wholesalerId=${currentUser.id}&includeInactive=true`);
+      const raw = response.data?.data || [];
+
+      if (isActive) {
+        setSupplies(raw.map(mapSupply));
+      }
+    };
+
+    loadInventory().catch((e) => console.error(e));
+
+    return () => {
+      isActive = false;
+    };
+  }, [currentUser?.id]);
 
   const handleEdit = (item) => {
     setEditingSupply(item);
@@ -162,6 +175,7 @@ const WholesaleInventory = () => {
       </div>
 
       <AddSupplyModal 
+        key={editingSupply?.id || "new-supply"}
         isOpen={isModalOpen} 
         onClose={handleCloseModal} 
         onSuccess={refreshInventory} 

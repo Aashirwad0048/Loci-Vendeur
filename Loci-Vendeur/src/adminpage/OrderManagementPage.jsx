@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import StatusFilters from '../components/admin/ordermanagement/StatusFilters';
@@ -14,6 +14,7 @@ const toUiOrder = (order) => ({
   status: order.status,
   paymentStatus: order.paymentStatus,
   createdAt: order.createdAt,
+  hoursElapsed: order.createdAt ? (Date.now() - new Date(order.createdAt).getTime()) / 3600000 : 0,
   items: (order.items || []).map((it) => ({
     name: it.productId?.name || 'Product',
     qty: it.quantity,
@@ -43,7 +44,7 @@ const OrderManagementPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const fetchOrders = async (nextFilters) => {
+  const fetchOrders = useCallback(async (nextFilters) => {
     try {
       setLoading(true);
       setError('');
@@ -74,11 +75,11 @@ const OrderManagementPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
 
   useEffect(() => {
     fetchOrders(filters);
-  }, [activeTab, filters]);
+  }, [fetchOrders, filters]);
 
   const filteredOrders = useMemo(() => orders, [orders]);
   const counts = useMemo(() => ({ [activeTab]: pagination.total }), [activeTab, pagination.total]);

@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom"; // Removed useNavigate
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import "./navbar.css";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
   const role = currentUser?.role;
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
-
   return (
-   <nav className="navbar">
+   <nav key={location.pathname} className="navbar">
   <div className="nav-container">
     
     <h1 className="nav-logo">Loci-Vendeur</h1>
@@ -23,19 +19,19 @@ export default function Navbar() {
       {role === "retailer" && (
         <>
           <li className="nav-item">
-            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/dashboard" onClick={() => setIsOpen(false)}>Dashboard</Link>
           </li>
           <li className="nav-item">
-            <Link to="/products">Inventory</Link>
+            <Link to="/products" onClick={() => setIsOpen(false)}>Inventory</Link>
           </li>
           <li className="nav-item">
-            <Link to="/billing">Billing</Link>
+            <Link to="/billing" onClick={() => setIsOpen(false)}>Billing</Link>
           </li>
           <li className="nav-item">
-            <Link to="/history">History</Link>
+            <Link to="/history" onClick={() => setIsOpen(false)}>History</Link>
           </li>
            <li className="nav-item">
-            <Link to="/profile">Profile</Link>
+            <Link to="/profile" onClick={() => setIsOpen(false)}>Profile</Link>
            </li>
         </>
       )}
@@ -43,19 +39,19 @@ export default function Navbar() {
       {role === "wholesaler" && (
         <>
           <li className="nav-item">
-            <Link to="/wholesaler/dashboard">Dashboard</Link>
+            <Link to="/wholesaler/dashboard" onClick={() => setIsOpen(false)}>Dashboard</Link>
           </li>
           <li className="nav-item">
-            <Link to="/wholesaler/orders">Orders</Link>
+            <Link to="/wholesaler/orders" onClick={() => setIsOpen(false)}>Orders</Link>
           </li>
           <li className="nav-item">
-            <Link to="/wholesaler/inventory">Supply Inventory</Link>
+            <Link to="/wholesaler/inventory" onClick={() => setIsOpen(false)}>Supply Inventory</Link>
           </li>
           <li className="nav-item">
-            <Link to="/wholesaler/analytics">Analytics</Link>
+            <Link to="/wholesaler/analytics" onClick={() => setIsOpen(false)}>Analytics</Link>
           </li>
           <li className="nav-item">
-            <Link to="/wholesaler/profile">Profile</Link>
+            <Link to="/wholesaler/profile" onClick={() => setIsOpen(false)}>Profile</Link>
           </li>
         </>
       )}
@@ -63,36 +59,36 @@ export default function Navbar() {
     {role === "admin" && (
   <>
     <li className="nav-item">
-      <Link to="/admin">Overview</Link>
+      <Link to="/admin" onClick={() => setIsOpen(false)}>Overview</Link>
     </li>
     <li className="nav-item">
-      <Link to="/admin/users">Users</Link>
+      <Link to="/admin/users" onClick={() => setIsOpen(false)}>Users</Link>
     </li>
     <li className="nav-item">
-      <Link to="/admin/orders">Orders</Link>
+      <Link to="/admin/orders" onClick={() => setIsOpen(false)}>Orders</Link>
     </li>
     <li className="nav-item">
-      <Link to="/admin/escrow">Escrow</Link>
+      <Link to="/admin/escrow" onClick={() => setIsOpen(false)}>Escrow</Link>
     </li>
     <li className="nav-item">
-      <Link to="/admin/inventory">Supply</Link>
+      <Link to="/admin/inventory" onClick={() => setIsOpen(false)}>Supply</Link>
     </li>
     <li className="nav-item">
-      <Link to="/admin/disputes">Disputes</Link>
+      <Link to="/admin/disputes" onClick={() => setIsOpen(false)}>Disputes</Link>
     </li>
     <li className="nav-item">
-      <Link to="/admin/analytics">Insights</Link>
+      <Link to="/admin/analytics" onClick={() => setIsOpen(false)}>Insights</Link>
     </li>
   </>
 )}
 
     </ul>
 
-    <div className="nav-toggle" onClick={() => setIsOpen(!isOpen)}>
+    <button type="button" className="nav-toggle" onClick={() => setIsOpen((open) => !open)} aria-label="Toggle navigation menu">
       <span className={`bar ${isOpen ? "open" : ""}`}></span>
       <span className={`bar ${isOpen ? "open" : ""}`}></span>
       <span className={`bar ${isOpen ? "open" : ""}`}></span>
-    </div>
+    </button>
 
   </div>
 </nav>

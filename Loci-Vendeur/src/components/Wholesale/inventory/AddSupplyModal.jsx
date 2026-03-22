@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { X, Save, Image as ImageIcon } from 'lucide-react';
 import API from '../../../api/axios';
 
@@ -13,17 +13,9 @@ const defaultFormState = {
 };
 
 const AddSupplyModal = ({ isOpen, onClose, onSuccess, wholesalerCity, initialData = null }) => {
-  
-  const [formData, setFormData] = useState(defaultFormState);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const isEditing = Boolean(initialData?.id);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    if (isEditing) {
-      setFormData({
+  const [formData, setFormData] = useState(() => {
+    if (initialData?.id) {
+      return {
         productName: initialData.productName || '',
         category: initialData.category || 'FMCG',
         price: initialData.price ?? '',
@@ -31,12 +23,14 @@ const AddSupplyModal = ({ isOpen, onClose, onSuccess, wholesalerCity, initialDat
         minOrderQty: initialData.minOrderQty ?? 1,
         image: initialData.image || '',
         active: true,
-      });
-      return;
+      };
     }
 
-    setFormData(defaultFormState);
-  }, [isOpen, isEditing, initialData]);
+    return defaultFormState;
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const isEditing = Boolean(initialData?.id);
 
   if (!isOpen) return null;
 
@@ -46,7 +40,7 @@ const AddSupplyModal = ({ isOpen, onClose, onSuccess, wholesalerCity, initialDat
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result });
+        setFormData((prev) => ({ ...prev, image: reader.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -119,17 +113,17 @@ const AddSupplyModal = ({ isOpen, onClose, onSuccess, wholesalerCity, initialDat
 
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Product Name</label>
-            <input required type="text" value={formData.productName} onChange={(e) => setFormData({...formData, productName: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="e.g. Fortune Refined Oil 15L" />
+            <input required type="text" value={formData.productName} onChange={(e) => setFormData((prev) => ({...prev, productName: e.target.value}))} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="e.g. Fortune Refined Oil 15L" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Bulk Price (per unit)</label>
-              <input required type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="₹" />
+              <input required type="number" value={formData.price} onChange={(e) => setFormData((prev) => ({...prev, price: e.target.value}))} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="₹" />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Category</label>
-              <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none text-sm">
+              <select value={formData.category} onChange={(e) => setFormData((prev) => ({...prev, category: e.target.value}))} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none text-sm">
                 <option value="FMCG">FMCG</option>
                 <option value="Electronics">Electronics</option>
                 <option value="Medical">Medical Supplies</option>
@@ -140,11 +134,11 @@ const AddSupplyModal = ({ isOpen, onClose, onSuccess, wholesalerCity, initialDat
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Total Bulk Stock</label>
-              <input required type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="Units" />
+              <input required type="number" value={formData.stock} onChange={(e) => setFormData((prev) => ({...prev, stock: e.target.value}))} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="Units" />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">MOQ (Min. Order)</label>
-              <input required type="number" value={formData.minOrderQty} onChange={(e) => setFormData({...formData, minOrderQty: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="Units" />
+              <input required type="number" value={formData.minOrderQty} onChange={(e) => setFormData((prev) => ({...prev, minOrderQty: e.target.value}))} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm" placeholder="Units" />
             </div>
           </div>
 

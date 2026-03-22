@@ -3,7 +3,7 @@ import { MapPin, AlertCircle } from 'lucide-react';
 import StatusBadge from '../usermanagement/StatusBadge';
 
 const OrderRow = ({ order, onClick }) => {
-  const hoursElapsed = (Date.now() - new Date(order.createdAt)) / 3600000;
+  const hoursElapsed = Number(order.hoursElapsed || 0);
   const isStuck = order.status === 'assigned' && hoursElapsed > 48;
 
   return (

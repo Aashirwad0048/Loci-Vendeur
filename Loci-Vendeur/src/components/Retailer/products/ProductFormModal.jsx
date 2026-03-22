@@ -1,20 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X } from 'lucide-react';
 
-const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing }) => {
-  const [formData, setFormData] = useState({ 
-    id: null, name: '', price: '', stock: '', category: 'General' 
-  });
+const defaultFormData = { id: null, name: '', price: '', stock: '', category: 'General' };
 
-  useEffect(() => {
-    if (isOpen) {
-      if (initialData && isEditing) {
-        setFormData(initialData);
-      } else {
-        setFormData({ id: null, name: '', price: '', stock: '', category: 'General' });
-      }
-    }
-  }, [isOpen, initialData, isEditing]);
+const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing }) => {
+  const [formData, setFormData] = useState(() =>
+    initialData && isEditing ? initialData : defaultFormData
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,7 +36,7 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing })
               className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none transition"
               placeholder="e.g. Premium Butter"
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              onChange={(e) => setFormData((prev) => ({...prev, name: e.target.value}))}
             />
           </div>
 
@@ -58,7 +50,7 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing })
                 className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-black outline-none transition"
                 placeholder="0.00"
                 value={formData.price}
-                onChange={(e) => setFormData({...formData, price: e.target.value})}
+                onChange={(e) => setFormData((prev) => ({...prev, price: e.target.value}))}
               />
             </div>
             <div>
@@ -70,7 +62,7 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing })
                 className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-black outline-none transition"
                 placeholder="0"
                 value={formData.stock}
-                onChange={(e) => setFormData({...formData, stock: e.target.value})}
+                onChange={(e) => setFormData((prev) => ({...prev, stock: e.target.value}))}
               />
             </div>
           </div>

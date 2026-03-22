@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Package, Truck, CheckCircle, ArrowLeft, Clock, MapPin } from "lucide-react";
 import API from "../api/axios";
@@ -37,7 +37,7 @@ export default function WholesaleTrack() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       const response = await API.get(`/orders/${id}`);
       setOrder(response.data?.data || null);
@@ -46,7 +46,7 @@ export default function WholesaleTrack() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     if (!id) {
@@ -58,7 +58,7 @@ export default function WholesaleTrack() {
 
     const interval = setInterval(fetchOrder, 5000);
     return () => clearInterval(interval);
-  }, [id, navigate]);
+  }, [fetchOrder, id, navigate]);
 
   const steps = useMemo(() => buildSteps(order?.status), [order?.status]);
   const displayId = order?._id ? `ORD-${String(order._id).slice(-6).toUpperCase()}` : id;

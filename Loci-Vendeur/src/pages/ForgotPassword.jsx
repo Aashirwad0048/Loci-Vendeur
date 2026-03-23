@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import API from '../api/axios';
 
+const MIN_REQUEST_DURATION_MS = 8000;
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,6 +15,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    const requestStartedAt = Date.now();
 
     const normalizedEmail = email.trim().toLowerCase();
     if (!normalizedEmail) {
@@ -23,8 +26,18 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
       await API.post('/auth/forgot-password', { email: normalizedEmail });
+      const elapsed = Date.now() - requestStartedAt;
+      const remainingDelay = Math.max(0, MIN_REQUEST_DURATION_MS - elapsed);
+      if (remainingDelay > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remainingDelay));
+      }
       setSuccess(true);
     } catch (err) {
+      const elapsed = Date.now() - requestStartedAt;
+      const remainingDelay = Math.max(0, MIN_REQUEST_DURATION_MS - elapsed);
+      if (remainingDelay > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remainingDelay));
+      }
       setError(err.response?.data?.message || 'Failed to generate reset link');
     } finally {
       setLoading(false);

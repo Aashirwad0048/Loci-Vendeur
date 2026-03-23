@@ -1,0 +1,11 @@
+
+> loci-vendeur-backend@1.0.0 start
+> node server.js
+
+MongoDB connected
+[escrow-auto-release] enabled intervalMs=60000 holdHours=24 batchSize=50
+Server running on http://localhost:5000
+[0mGET /api/health [32m200[0m 1.796 ms - 79[0m
+[auth:forgot-password] request for anonymous.hello6096@gmail.com | exists=true
+[auth:forgot-password] email sent to anonymous.hello6096@gmail.com
+[0mPOST /api/auth/forgot-password [32m200[0m 4549.093 ms - 106[0m

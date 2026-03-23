@@ -20,6 +20,7 @@ COMMISSION_RATE=0.03
 ## Password Reset / SMTP
 ```env
 PASSWORD_RESET_CLIENT_URL=http://localhost:3000
+BREVO_API_KEY=
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
@@ -29,6 +30,7 @@ MAIL_FROM="Loci Vendeur <no-reply@locivendeur.com>"
 MAIL_FALLBACK_TO_CONSOLE=true
 ```
 
+- In production on Render, prefer `BREVO_API_KEY`. If it is set, the backend will send reset emails through Brevo's API instead of SMTP.
 - Use `SMTP_SECURE=true` with port `465`.
 - Use `SMTP_SECURE=false` with port `587`.
 - `MAIL_FALLBACK_TO_CONSOLE=true` is helpful locally; set it to `false` in production.

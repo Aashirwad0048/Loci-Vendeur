@@ -38,13 +38,15 @@ const env = {
       : process.env.SMTP_SECURE === "true",
   smtpUser: process.env.SMTP_USER || "",
   smtpPass: process.env.SMTP_PASS || "",
+  brevoApiKey: process.env.BREVO_API_KEY || "",
   mailFrom: process.env.MAIL_FROM || "noreply@loci-vendeur.local",
   orsApiKey: process.env.ORS_API_KEY || "",
   geocodeUserAgent: process.env.GEOCODE_USER_AGENT || "loci-vendeur-backend/1.0",
   mailFallbackToConsole: process.env.MAIL_FALLBACK_TO_CONSOLE === "true",
 };
 
-env.isMailerConfigured = Boolean(env.smtpHost && env.smtpUser && env.smtpPass);
+env.isBrevoConfigured = Boolean(env.brevoApiKey);
+env.isMailerConfigured = Boolean(env.isBrevoConfigured || (env.smtpHost && env.smtpUser && env.smtpPass));
 env.clientUrls = String(env.clientUrl)
   .split(",")
   .map((url) => url.trim())

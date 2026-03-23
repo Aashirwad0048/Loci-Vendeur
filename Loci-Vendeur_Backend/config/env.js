@@ -32,8 +32,17 @@ const env = {
   escrowAutoReleaseBatchSize: Number(process.env.ESCROW_AUTO_RELEASE_BATCH_SIZE || 50),
   smtpHost: process.env.SMTP_HOST || "",
   smtpPort: Number(process.env.SMTP_PORT || 587),
+  smtpSecure:
+    process.env.SMTP_SECURE === undefined
+      ? Number(process.env.SMTP_PORT || 587) === 465
+      : process.env.SMTP_SECURE === "true",
   smtpUser: process.env.SMTP_USER || "",
   smtpPass: process.env.SMTP_PASS || "",
+  smtpRequireTls: process.env.SMTP_REQUIRE_TLS === "true",
+  smtpRejectUnauthorized: process.env.SMTP_REJECT_UNAUTHORIZED !== "false",
+  smtpConnectionTimeoutMs: Number(process.env.SMTP_CONNECTION_TIMEOUT_MS || 10000),
+  smtpGreetingTimeoutMs: Number(process.env.SMTP_GREETING_TIMEOUT_MS || 10000),
+  smtpSocketTimeoutMs: Number(process.env.SMTP_SOCKET_TIMEOUT_MS || 15000),
   mailFrom: process.env.MAIL_FROM || "noreply@loci-vendeur.local",
   orsApiKey: process.env.ORS_API_KEY || "",
   geocodeUserAgent: process.env.GEOCODE_USER_AGENT || "loci-vendeur-backend/1.0",
@@ -41,5 +50,12 @@ const env = {
 };
 
 env.isMailerConfigured = Boolean(env.smtpHost && env.smtpUser && env.smtpPass);
+env.clientUrls = String(env.clientUrl)
+  .split(",")
+  .map((url) => url.trim())
+  .filter(Boolean);
+env.passwordResetClientUrl = String(process.env.PASSWORD_RESET_CLIENT_URL || env.clientUrls[0] || "")
+  .trim()
+  .replace(/\/+$/, "");
 
 export default env;

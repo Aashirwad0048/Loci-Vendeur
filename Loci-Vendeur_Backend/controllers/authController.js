@@ -156,19 +156,21 @@ export const login = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
   const normalizedEmail = String(email || "").trim().toLowerCase();
+  const genericResponse = formatResponse({
+    message: "If the account exists, password reset instructions have been sent",
+    data: null,
+  });
 
   const user = await User.findOne({ email: normalizedEmail });
   console.info(`[auth:forgot-password] request for ${normalizedEmail} | exists=${Boolean(user)}`);
 
   if (!user) {
-    return res
-      .status(404)
-      .json(formatResponse({ success: false, message: "Email does not exist", data: null }));
+    return res.json(genericResponse);
   }
 
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
-  const resetUrl = `${env.clientUrl}/reset-password/${resetToken}`;
+  const resetUrl = `${env.passwordResetClientUrl}/reset-password/${resetToken}`;
 
   try {
     await sendPasswordResetEmail({
@@ -193,15 +195,12 @@ export const forgotPassword = async (req, res) => {
     user.resetPasswordToken = null;
     user.resetPasswordExpires = null;
     await user.save({ validateBeforeSave: false });
-    throw error;
+    throw Object.assign(new Error("Unable to send password reset email"), {
+      statusCode: 502,
+    });
   }
 
-  return res.json(
-    formatResponse({
-      message: "Password reset instructions were sent",
-      data: null,
-    })
-  );
+  return res.json(genericResponse);
 };
 
 export const resetPassword = async (req, res) => {

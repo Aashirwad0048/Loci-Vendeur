@@ -9,10 +9,17 @@ const createTransporter = () => {
   return nodemailer.createTransport({
     host: env.smtpHost,
     port: env.smtpPort,
-    secure: env.smtpPort === 465,
+    secure: env.smtpSecure,
+    requireTLS: env.smtpRequireTls,
+    connectionTimeout: env.smtpConnectionTimeoutMs,
+    greetingTimeout: env.smtpGreetingTimeoutMs,
+    socketTimeout: env.smtpSocketTimeoutMs,
     auth: {
       user: env.smtpUser,
       pass: env.smtpPass,
+    },
+    tls: {
+      rejectUnauthorized: env.smtpRejectUnauthorized,
     },
   });
 };
@@ -41,4 +48,3 @@ export const sendPasswordResetEmail = async ({ to, name, resetUrl }) => {
     `,
   });
 };
-

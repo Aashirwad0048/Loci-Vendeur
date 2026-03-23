@@ -15,7 +15,7 @@ import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 const app = express();
 
-const allowedOrigins = env.clientUrl.split(',').map(url => url.trim());
+const allowedOrigins = env.clientUrls;
 
 app.use(
   cors({

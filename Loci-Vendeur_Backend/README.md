@@ -17,6 +17,27 @@ CLIENT_URL=http://localhost:3000
 COMMISSION_RATE=0.03
 ```
 
+## Password Reset / SMTP
+```env
+PASSWORD_RESET_CLIENT_URL=http://localhost:3000
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@example.com
+SMTP_PASS=your-app-password
+SMTP_REQUIRE_TLS=true
+SMTP_REJECT_UNAUTHORIZED=true
+SMTP_CONNECTION_TIMEOUT_MS=10000
+SMTP_GREETING_TIMEOUT_MS=10000
+SMTP_SOCKET_TIMEOUT_MS=15000
+MAIL_FROM="Loci Vendeur <no-reply@locivendeur.com>"
+MAIL_FALLBACK_TO_CONSOLE=true
+```
+
+- Use `SMTP_SECURE=true` with port `465`.
+- Use `SMTP_SECURE=false` with port `587`.
+- `MAIL_FALLBACK_TO_CONSOLE=true` is helpful locally; set it to `false` in production.
+
 ## Core Packages
 - express
 - mongoose

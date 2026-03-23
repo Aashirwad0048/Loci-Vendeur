@@ -1,0 +1,2 @@
+MongoDB connected
+[escrow-auto-release] enabled intervalMs=60000 holdHours=24 batchSize=50

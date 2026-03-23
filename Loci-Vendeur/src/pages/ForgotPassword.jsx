@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import API from '../api/axios';
 
-const MIN_REQUEST_DURATION_MS = 8000;
+const MIN_REQUEST_DURATION_MS = 30000;
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');

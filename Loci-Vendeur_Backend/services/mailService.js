@@ -10,16 +10,9 @@ const createTransporter = () => {
     host: env.smtpHost,
     port: env.smtpPort,
     secure: env.smtpSecure,
-    requireTLS: env.smtpRequireTls,
-    connectionTimeout: env.smtpConnectionTimeoutMs,
-    greetingTimeout: env.smtpGreetingTimeoutMs,
-    socketTimeout: env.smtpSocketTimeoutMs,
     auth: {
       user: env.smtpUser,
       pass: env.smtpPass,
-    },
-    tls: {
-      rejectUnauthorized: env.smtpRejectUnauthorized,
     },
   });
 };
